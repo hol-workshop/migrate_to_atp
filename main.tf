@@ -105,7 +105,6 @@ module "ogg_compute" {
 	deployments           = "${var.deployments_json  != "" ? var.deployments_json
                          :   var.deployment_2_name != "" && var.deployment_2_dbms != "" ? "[ {\"name\":\"${var.deployment_1_name}\",\"dbms\":\"${var.deployment_1_dbms}\"}, {\"name\":\"${var.deployment_2_name}\",\"dbms\":\"${var.deployment_2_dbms}\"} ]"
                                                                                         : "[ {\"name\":\"${var.deployment_1_name}\",\"dbms\":\"${var.deployment_1_dbms}\"} ]"}"
-#deployment_1_wallet   = "${module.adb_wallet_1.wallet}"
   deployment_2_wallet   = "${module.atp.wallet}"
   compartment_id        = "${var.compartment_ocid}"
   availability_domain   = data.oci_identity_availability_domains.ads.availability_domains[0].name
@@ -122,12 +121,6 @@ module "ogg_compute" {
   subnet_id             = oci_core_subnet.holvcn_public_subnet.id
   assign_public_ip      = "${var.ogg_micro_assign_public_ip}"
 }
-#module "adb_wallet_1" {
-#  source                 = "./wallet"
-#  fetch_wallet           = "${var.deployment_1_adb}"
-#  autonomous_database_id = "${var.deployment_1_adb_id}"
-#}
-
 output "ATP_generated_password" {
   value = module.atp.ATP_generated_password
 }
