@@ -33,7 +33,7 @@ module "ogg_pgsql_compute" {
 	source                	= "./ogg_pgsql"
 	compartment_id      	= "${var.compartment_ocid}"
 	availability_domain   	= data.oci_identity_availability_domains.ads.availability_domains[0].name
-	ssh_public_key			= file("id_rsa.pub")
+	ssh_public_key		= file("~/.ssh/oci.pub")
 	boot_size_in_gbs      	= "${var.ogg_pgsql_boot_size_in_gbs}"
 	display_name          	= "${var.ogg_pgsql_display_name}"
 	hostname_label        	= "${var.ogg_pgsql_hostname_label}"
@@ -93,33 +93,33 @@ module "atp" {
 	db_name         = "${var.atp_db_name}"
 	db_workload  	= "${var.atp_workload}"
 	is_free_tier	= "${var.atp_is_free_tier}"
-	db_version 		= "${var.atp_db_version}"
+	db_version 	= "${var.atp_db_version}"
 	cpu_core_count	= "${var.atp_ocpu_count}"
 	data_storage_size_in_tbs 	= "${var.atp_storage_size}"
 	license_model	= "${var.atp_license_model}"
 	generate_type	= "${var.atp_wallet_generate_type}"
 }
 module "ogg_compute" {
-	depends_on 		= [module.atp]
-	source                = "./ogg_micro"
-	deployments           = "${var.deployments_json  != "" ? var.deployments_json
+	depends_on 	= [module.atp]
+	source          = "./ogg_micro"
+	deployments     = "${var.deployments_json  != "" ? var.deployments_json
                          :   var.deployment_2_name != "" && var.deployment_2_dbms != "" ? "[ {\"name\":\"${var.deployment_1_name}\",\"dbms\":\"${var.deployment_1_dbms}\"}, {\"name\":\"${var.deployment_2_name}\",\"dbms\":\"${var.deployment_2_dbms}\"} ]"
                                                                                         : "[ {\"name\":\"${var.deployment_1_name}\",\"dbms\":\"${var.deployment_1_dbms}\"} ]"}"
-  deployment_2_wallet   = "${module.atp.wallet}"
-  compartment_id        = "${var.compartment_ocid}"
-  availability_domain   = data.oci_identity_availability_domains.ads.availability_domains[0].name
-  ssh_public_key        = file("id_rsa.pub")
-  boot_size_in_gbs      = "${var.ogg_micro_boot_size_in_gbs}"
-  display_name          = "${var.ogg_micro_display_name}"
-  hostname_label        = "${var.ogg_micro_hostname_label}"
-  compute_shape         = "${var.ogg_micro_compute_shape}"
-  image_id              = "${module.ogg_micro_image.image_id}"
-  swap_volume_id        = "${module.ogg_micro_swap_block_volume.volume_id}"
-  trails_volume_id      = "${module.ogg_micro_trails_block_volume.volume_id}"
-  deployments_volume_id = "${module.ogg_micro_deployments_block_volume.volume_id}"
-  cacheManager_volume_id = "${module.ogg_micro_cacheManager_block_volume.volume_id}"
-  subnet_id             = oci_core_subnet.holvcn_public_subnet.id
-  assign_public_ip      = "${var.ogg_micro_assign_public_ip}"
+  	deployment_2_wallet   = "${module.atp.wallet}"
+  	compartment_id        = "${var.compartment_ocid}"
+  	availability_domain   = data.oci_identity_availability_domains.ads.availability_domains[0].name
+  	ssh_public_key        = file("~/.ssh/oci.pub")
+  	boot_size_in_gbs      = "${var.ogg_micro_boot_size_in_gbs}"
+  	display_name          = "${var.ogg_micro_display_name}"
+  	hostname_label        = "${var.ogg_micro_hostname_label}"
+  	compute_shape         = "${var.ogg_micro_compute_shape}"
+  	image_id              = "${module.ogg_micro_image.image_id}"
+  	swap_volume_id        = "${module.ogg_micro_swap_block_volume.volume_id}"
+  	trails_volume_id      = "${module.ogg_micro_trails_block_volume.volume_id}"
+  	deployments_volume_id 	= "${module.ogg_micro_deployments_block_volume.volume_id}"
+  	cacheManager_volume_id 	= "${module.ogg_micro_cacheManager_block_volume.volume_id}"
+  	subnet_id             = oci_core_subnet.holvcn_public_subnet.id
+ 	assign_public_ip      = "${var.ogg_micro_assign_public_ip}"
 }
 output "ATP_generated_password" {
   value = module.atp.ATP_generated_password
