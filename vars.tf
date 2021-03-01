@@ -58,10 +58,10 @@ variable "holvcn_nat_cidr_block" {
 
 ################################ TARGET ATP
 variable "atp_display_name" {
-	default = "TargetAutonomous"
+	default = "HOL Target ATP"
 }
 variable "atp_db_name" {
-	default = "target"
+	default = "hol"
 }
 variable "atp_db_version" {
 	default = "19c"
@@ -94,15 +94,25 @@ variable "database_id" {
 
 
 ################################ SOURCE PGSQL
-variable "source_postgre_display_name" {
-	default = "SourcePostgreSQL"
+variable "source_pgsql_assign_public_ip" {
+  default = true
+}
+variable "source_pgsql_boot_size_in_gbs" {
+  default = "50"
+}
+variable "source_pgsql_hostname_label" {
+  default = "sourcedb"
 }
 
-variable "source_postgre_shape" {
-## always free
-  default = "VM.Standard.E2.1.Micro"
-## 
-##  default = "VM.Standard.E2.1"
+variable "source_pgsql_custom_volume_sizes" {
+  default = false
+}
+variable "source_pgsql_display_name" {
+	default = "HOL Source PGSQL"
+}
+
+variable "source_pgsql_compute_shape" {
+  default = "VM.Standard.E2.1"
 }
 
 variable "source_postgre_image_ocid" {
