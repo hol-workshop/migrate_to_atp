@@ -8,7 +8,7 @@ variable "ssh_public_key" {}
 variable "boot_size_in_gbs" {}
 variable "display_name" {}
 variable "hostname_label" {}
-
+variable "source_db" {}
 variable "installations_directory" {
   default = "/u01/app/ogg"
 }

@@ -18,6 +18,7 @@ resource "oci_core_instance" "vm1" {
 	}
 	metadata = {
 		ssh_authorized_keys = var.ssh_public_key
+		user_data 			= data.template_cloudinit_config.ogg_postgre_cloud_init.rendered
 	}
 	extended_metadata = {
 		installations_directory = var.installations_directory
