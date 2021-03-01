@@ -58,10 +58,10 @@ variable "holvcn_nat_cidr_block" {
 
 ################################ TARGET ATP
 variable "atp_display_name" {
-	default = "HOL_ATP2"
+	default = "TargetAutonomous"
 }
 variable "atp_db_name" {
-	default = "hol2"
+	default = "target"
 }
 variable "atp_db_version" {
 	default = "19c"
@@ -99,7 +99,10 @@ variable "source_postgre_display_name" {
 }
 
 variable "source_postgre_shape" {
-  default = "VM.Standard.E2.1"
+## always free
+  default = "VM.Standard.E2.1.Micro"
+## 
+##  default = "VM.Standard.E2.1"
 }
 
 variable "source_postgre_image_ocid" {
