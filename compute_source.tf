@@ -13,7 +13,7 @@ resource oci_core_instance source_postgresql {
 		source_type = "image"
 	}
 	metadata = {
-		ssh_authorized_keys = file("id_rsa.pub")
+		ssh_authorized_keys = file("oci.pub")
 		user_data = data.template_cloudinit_config.source_postgre_cloud_init.rendered
 	}
 }
