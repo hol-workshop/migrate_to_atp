@@ -1,7 +1,7 @@
 # migrate_to_atp
 Hello Folks! Welcome to migrate to autonomous database lab.
 
-In this lab we will migrate a postgresql database to an Autonomous database in Oracle Cloud Infrastructure. We will use Oracle Goldengate for migration steps, and all of our services will be hosted in OCI for this lab purpose. This lab has 2 steps.
+In this lab we will migrate a postgresql database to an Autonomous database in Oracle Cloud Infrastructure. We will use Oracle Goldengate for migration steps, and all of our services will be hosted in OCI for this lab purpose. This lab has 4 steps.
 
 In step 1, we will use terraform to create and prepare our work environment:
 
@@ -17,14 +17,16 @@ In step 2, We will create our target tables' structures in Autonomous database
 - Create tables using pre-created sqlfile.
 - Enable GGADMIN for Goldengate replication.
 
-In step 3, Oracle Goldengate configuration will consist of followings:
+In step 3:
 
 - Extract exttab process at Goldengate for non-Oracle database, it is known as change data capture for continuous replication.
 - Extract extdmp process at Goldengate for non-Oracle database, it will ship our captured trail files to Microservices for continuous replication.
 - Extract initload process at Goldengate for non-Oracle database, it is our first data loader process and inserts to ATP.
-- Replicate process at Microservices, it will apply trail files captured by initload process.
 
 ![](/files/general.gif)
+
+In step 4:
+- Replicate process at Microservices, it will apply trail files captured by initload process.
 
 # Prerequisites 
 
