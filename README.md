@@ -180,11 +180,17 @@ alter user ggadmin identified by "GG##lab12345" account unlock;
 
 ![](/files/sql_dev_3.png)
 
-Let's run 
+Let's check whether the parameter enable_goldengate_replicaton is set to true. 
+```
+select * from v$parameter where name = 'enable_goldengate_replication';
+``` 
+
+If value is FALSE, then modify the parameter:
+
 ```
 alter system set enable_goldengate_replication = true scope=both;
 ``` 
-to enable_goldengate_replicaton, check results.
+to enable_goldengate_replicaton, check results. This is only applicable to older Autonomous database version.
 
 ![](/files/sql_dev_4.png)
 
@@ -208,6 +214,32 @@ This part describes the tasks for configuring and running Oracle GoldenGate for 
 I'd say there are many requirements for replicating data from PostgreSQL database, review official document if you want extra options such as more security with different privileges et cetera.
 
 Let's begin.
+
+#### Connect to your Microservices instance
+
+We need to enable network access to Microservices from our Classic deployment. Without adding ports to Microservices' firewall would cause you failure in next steps.
+Let's make console connection to microservice, copy ip address of OGG_Microservices_Public_ip and connect using:
+
+**`ssh opc@your_microservice_ip_address -i ~/.ssh/oci`**
+
+Once you are there run below commands, which will add ports and take them in effect.
+
+```
+sudo firewall-cmd --zone=public --permanent --add-port=9011-9014/tcp
+
+sudo firewall-cmd --zone=public --permanent --add-port=9021-9024/tcp
+
+sudo firewall-cmd --zone=public --permanent --add-port=443/tcp
+
+sudo firewall-cmd --zone=public --permanent --add-port=80/tcp
+
+sudo firewall-cmd --zone=public --permanent --add-port=7809-7810/tcp
+
+sudo firewall-cmd --reload
+
+```
+You can exit from this instance, and proceed next steps.
+
 
 #### Connect to your HOL OGG Postgresql instance
 
