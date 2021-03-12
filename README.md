@@ -48,7 +48,7 @@ Once cloud shell environment is ready, issue below commands:
   openssl genrsa -out ~/.ssh/oci_api_key.pem 2048
   
   openssl rsa -pubout -in ~/.ssh/oci_api_key.pem -out ~/.ssh/oci_api_key_public.pem
-  
+ 
   openssl rsa -pubout -outform DER -in ~/.ssh/oci_api_key.pem | openssl md5 -c | awk '{print $2}' > ~/.ssh/oci_api_key.fingerprint
   
   cat ~/.ssh/oci_api_key_public.pem
@@ -76,7 +76,7 @@ In your notepad, modify following:
   export TF_VAR_user_ocid="your-user-value-goes-here"
 ```
 
-After you modified above using your parameters/values, now we we will save it to ".bash_profile", to do so go to your terminal and issue:
+After you modified above using your parameters/values, now we we will save it to ".bash_profile", go to cloud-shell terminal and issue:
 
 ```
   vi ~/.bash_profile
@@ -84,14 +84,16 @@ After you modified above using your parameters/values, now we we will save it to
 
 *NOTE: Edit a file uses **vi** editor, if you never used it before here is little instruction. 
 When you issue **vi some_file_name** it will either open if that some_file_name exists or create a new file called some_file_name. 
-You have to press **i** for editing the file, then if you are done editing press **:wq** keys then hit enter for save & quit.*
+You have to press **i** to enable editing, then "shift+insert" to paste. If you are done editing press **:wq** keys then hit enter for save & quit.*
 
 ![](/files/0.Prep_4.PNG)
 
-then issue following to use variables you added to ".bash_profile" file.
-```
-  . ~/.bash_profile
-```
+
+Now, once you've set these values close cloud-shell terminal by clicking on exit "X" button. Then again open cloud-shell terminal.
+
+
+![](/files/0.Prep_0.PNG)
+
 You've done with prerequisites.
 
 # Step 1
@@ -105,16 +107,24 @@ cd migrate_to_atp
 
 ![](/files/1.Git.PNG)
 
-
-Now we need to create one more file. Quite similar to bash_profile, issue **`vi terraform.tfvars`**, modify following parameters and insert to that file:
+Now we need to create a file to help terraform understanding your environment. Let's modify following parameters in your notepad and copy it to clipboard.
 
 ```
 tenancy_ocid  = "your_tenancy_value_here"
 ssh_public_key  = "~/.ssh/oci.pub"
 region = "your-region-value here"
-compartment_ocid = "your-compartment-value_here"
+compartment_ocid = "your-tenancy-value_here"
 ```
-Good practice is keep it in your notepad also.
+
+Enter below command in your current working migrate_to_atp directory:
+
+**`vi terraform.tfvars`**
+
+This will create a new file, *You have to press **i** to enable editing, then "shift+insert" to paste copied parameter. When you are done editing press **:wq** keys then hit enter for save & quit.*
+
+Good practice is, always keep it in your notepad.
+
+### Terraform
 
 Now, time to play terraform. Plan and apply steps shouldn't ask any input from you. if it asks you to provide such as compartment_ocid, then again check previous files.
 
@@ -170,11 +180,17 @@ alter user ggadmin identified by "GG##lab12345" account unlock;
 
 ![](/files/sql_dev_3.png)
 
-Let's run 
+Let's check whether the parameter enable_goldengate_replicaton is set to true. 
+```
+select * from v$parameter where name = 'enable_goldengate_replication';
+``` 
+
+If value is FALSE, then modify the parameter:
+
 ```
 alter system set enable_goldengate_replication = true scope=both;
 ``` 
-to enable_goldengate_replicaton, check results.
+to enable_goldengate_replicaton, check results. This is only applicable to older Autonomous database version.
 
 ![](/files/sql_dev_4.png)
 
@@ -198,6 +214,32 @@ This part describes the tasks for configuring and running Oracle GoldenGate for 
 I'd say there are many requirements for replicating data from PostgreSQL database, review official document if you want extra options such as more security with different privileges et cetera.
 
 Let's begin.
+
+#### Connect to your Microservices instance
+
+We need to enable network access to Microservices from our Classic deployment. Without adding ports to Microservices' firewall would cause you failure in next steps.
+Let's make console connection to microservice, copy ip address of OGG_Microservices_Public_ip and connect using:
+
+**`ssh opc@your_microservice_ip_address -i ~/.ssh/oci`**
+
+Once you are there run below commands, which will add ports and take them in effect.
+
+```
+sudo firewall-cmd --zone=public --permanent --add-port=9011-9014/tcp
+
+sudo firewall-cmd --zone=public --permanent --add-port=9021-9024/tcp
+
+sudo firewall-cmd --zone=public --permanent --add-port=443/tcp
+
+sudo firewall-cmd --zone=public --permanent --add-port=80/tcp
+
+sudo firewall-cmd --zone=public --permanent --add-port=7809-7810/tcp
+
+sudo firewall-cmd --reload
+
+```
+You can exit from this instance, and proceed next steps.
+
 
 #### Connect to your HOL OGG Postgresql instance
 
