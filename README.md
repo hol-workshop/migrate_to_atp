@@ -41,7 +41,7 @@ To use the Cloud Shell machine, your tenancy administrator must grant the requir
 
 -   Create SSH keys in cloud-shell environment
 -   Configure API keys for your cloud user
--	  Modify bash_profile to interact with terraform 
+-	  Modify ".bash_profile" to interact with terraform 
 
 Let's prepare our work directory. 
 
