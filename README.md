@@ -696,12 +696,12 @@ Here is summary of resources which was created by Terraform script and used in o
 - Public Subnet, Internet Gateway
 - Private Subnet, NAT Gateway, Service gateway
 
-2. [Compute Virtual Machines and Shapes, OS Images] (https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm)
+2. [Compute Virtual Machines and Shapes, OS Images](https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm)
 - Source PostgreSQL database instance, 
 - Goldengate PostgreSQL instance
 - Goldengate Microservices instance
 
-3. [Autonomous Database offerings ] (https://docs.oracle.com/en-us/iaas/Content/Database/Concepts/adboverview.htm)
+3. [Autonomous Database offerings ](https://docs.oracle.com/en-us/iaas/Content/Database/Concepts/adboverview.htm)
 - Target ATP
 
 4. [Oracle Cloud Marketplace](https://docs.oracle.com/en-us/iaas/Content/Marketplace/Concepts/marketoverview.htm)
