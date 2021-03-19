@@ -30,13 +30,22 @@ In step 4:
 
 # Prerequisites 
 
-- Get your Oracle cloud account first!
+In this step, we will show you how to prepare your work environment in Oracle Cloud Infrastructure. We will use cloud-shell as our terminal which is console based, web terminal built in OCI console. It is good to use this terminal, in case you are behind corporate VPN, in case you don't have stable network connection.
+To use the Cloud Shell machine, your tenancy administrator must grant the required IAM (Identity and Access Management) policy.
 
-If you don't have an OCI account, you can sign up for a free trial [here](). 
+### Assumptions
+- You have an Oracle **Free Tier** or existing **Paid** cloud account
+- Your cloud account user must have required IAM (Identity and Access Management) policy or admin user.
 
-- Let's prepare our work directory. 
+### Objectives
 
-We will use something called Cloud Shell in OCI web console, which is simple and sophisticated cloud terminal for the most of your need. It is located right top corner of OCI web console
+-   Create SSH keys in cloud-shell environment
+-   Configure API keys for your cloud user
+-	  Modify bash_profile to interact with terraform 
+
+Let's prepare our work directory. 
+
+Open Cloud-shell in OCI web console, which is simple and sophisticated cloud terminal for the most of your need. It is located right top corner of OCI web console
 
 ![](/files/0.Prep_0.PNG)
 
@@ -82,9 +91,9 @@ After you modified above using your parameters/values, now we we will save it to
   vi ~/.bash_profile
 ```
 
+
 *NOTE: Edit a file uses **vi** editor, if you never used it before here is little instruction. 
-When you issue **vi some_file_name** it will either open if that some_file_name exists or create a new file called some_file_name. 
-You have to press **i** to enable editing, then "shift+insert" to paste. If you are done editing press **:wq** keys then hit enter for save & quit.*
+When you issue **vi .bash_profile** it will open a file. You have to press **i** key to enable editing, then "shift+insert" to paste from clipboard. When you are done editing press **:wq** keys then hit enter for save & quit.*
 
 ![](/files/0.Prep_4.PNG)
 
@@ -96,8 +105,9 @@ Now, once you've set these values close cloud-shell terminal by clicking on exit
 
 You've done with prerequisites.
 
-# Step 1
-Okay, let's begin our lab. First we'll make a copy of lab repository.
+# LAB 1
+
+In this first lab, we will prepare our work environment and create our lab resources using Terraform script.
 
 ```
 git clone https://github.com/hol-workshop/migrate_to_atp.git
@@ -107,7 +117,8 @@ cd migrate_to_atp
 
 ![](/files/1.Git.PNG)
 
-Now we need to create a file to help terraform understanding your environment. Let's modify following parameters in your notepad and copy it to clipboard.
+
+Now we need to create a file to help terraform understanding your environment. Let's modify following parameters in your notepad and copy it.
 
 ```
 tenancy_ocid  = "your_tenancy_value_here"
@@ -120,26 +131,31 @@ Enter below command in your current working migrate_to_atp directory:
 
 **`vi terraform.tfvars`**
 
-This will create a new file, *You have to press **i** to enable editing, then "shift+insert" to paste copied parameter. When you are done editing press **:wq** keys then hit enter for save & quit.*
+*This will create a new file, you have to press **i** key to enable editing, then "shift+insert" to paste copied parameter. When you are done editing press **:wq** keys then hit enter for save & quit.*
 
-Good practice is, always keep it in your notepad.
+Good practice is, always keep it in your side notepad,
 
 ### Terraform
 
-Now, time to play terraform. Plan and apply steps shouldn't ask any input from you. if it asks you to provide such as compartment_ocid, then again check previous files.
+Now, time to play terraform. Run below command to download necessary terraform files from OCI provider.
 
 ```
 terraform init
+```
 
+Plan and apply steps shouldn't ask any input from you. If it asks you to provide such as compartment_ocid, then again check previous files.
+
+```
 terraform plan
 
 terraform apply --auto-approve
 ``` 
-Make a copy of your output results.
+
+Make a copy of your output results in your notepad also for later use.
 
 ![](/files/1.git_1.PNG)
 
-# Step 2
+# LAB 2
 
 We need to create our target tables for our GG migration and enable GGADMIN for replication to Autonomous database.
 
@@ -161,7 +177,7 @@ In the **DEVELOPMENT** section, click on **SQL**.
 
 #### Create target tables
 
-Let's create our target tables for migration. Please download target table creation script **[from here](./files/CreateTables.sql)**.  Open this file link and choose **RAW** then save it as CreateTables.sql file. Make sure to save these with correct extension .sql not txt!
+Let's create our target tables for migration. Please download target table creation script **[from here](./files/CreateTables.sql)**.  Open this file link and choose **RAW** then save it as CreateTables.sql file. Make sure to save these with correct extension **.sql** not txt!
 
 SQL Developer Web opens a worksheet tab, where you execute queries. Drag your downloaded **CreateTables.sql** file and drop in the worksheet area. Then run create statements.
 
@@ -194,10 +210,10 @@ to enable_goldengate_replicaton, check results. This is only applicable to older
 
 ![](/files/sql_dev_4.png)
 
-We successfully enabled GGADMIN in our target Autonomous Database and created target table structures. Let's proceed to Step 3.
+We successfully enabled GGADMIN in our target Autonomous Database and created target table structures. 
 
 
-# Step 3 
+# LAB 3 
 
 With Oracle GoldenGate Classic for PosgreSQL, you can perform initial loads and capture transactional data from supported PostgreSQL versions and replicate the data to a PostgreSQL database or other supported Oracle GoldenGate targets, such as an Oracle Database. 
 We have created and pre-loaded some test data into our test Postgresql database in step 1 using terraform automation.
@@ -238,10 +254,10 @@ sudo firewall-cmd --zone=public --permanent --add-port=7809-7810/tcp
 sudo firewall-cmd --reload
 
 ```
-You can exit from this instance, and proceed next steps.
 
+Exit from this instance with command **`exit`** and go back to your cloud-shell.
 
-#### Connect to your HOL OGG Postgresql instance
+#### Access to Goldengate classic instance
 
 Oracle GoldenGate Classic for Non-Oracle (PostgreSQL) allows you to quickly access the GoldenGate Service Command Interface (GGCSI) and is preconfigured with a running Manager process. Copy ip address of OGG_PGSQL_Public_ip and connect using:
 
@@ -249,13 +265,17 @@ Oracle GoldenGate Classic for Non-Oracle (PostgreSQL) allows you to quickly acce
 
 #### Run GGSCI for the first time
 
-After logging in to the compute node, to start GGSCI, execute the following commands separately:
+After logging in to the compute node, you need to make sure your Goldengate environment knows about current odbc driver, execute the following commands separately in your cloud-shell:
 
 ```
 export ODBCINI=/home/opc/postgresql/odbc.ini
 
 cd /usr/local/bin/
+```
 
+Then run below command to start GGSCI to start:
+
+```
 ./ggsci
 ```
 
@@ -264,22 +284,43 @@ cd /usr/local/bin/
 #### Create Work directories 
 
 We need to create our work directories in GoldenGate before we start working. Command creates the default directories within the Oracle GoldenGate home directory. 
-Once your in GGSCI console, issue **`CREATE SUBDIRS`** command to create your directories.
 
-#### Start Goldengate Manager
+Once you are in GGSCI console, issue below command to create your directories.
 
-After creating sub directories, we need to set Goldengate Manager's port, issue **`EDIT PARAMS MGR`** and enter **`PORT 7809`** then save.
+```
+CREATE SUBDIRS
+```
+#### Edit Goldengate Manager Port
 
+We need to set manager’s port to start Goldengate manager process
+To do so, issue:
+
+```
+EDIT PARAMS MGR
+```
+
+It will open parameter file of manager process and enter and save.
+
+```
+PORT 7809
+```
 _**NOTE:** Editing uses **vi** editor, you have to press key **i** to edit and press **:wq** keys then **hit enter** for save & quit._
 
 
-Then start goldengate manager process by issueing **`START MGR`** command. You can check if manager status by issueing **`INFO MGR`** command.
+
+#### Start Goldengate Manager
+
+Now start Goldengate manager process by issuing below command:
+
+```START MGR```
+
+You can check if manager status by issueing **`INFO MGR`** command.
 
 ![](/files/gg_pg_config_3.gif)
 
 #### Connect to Source PostgreSQL
 
-Run the following command to log into the database:
+Run the following command to log into the database from Goldengate instance:
 
 **```DBLOGIN sourcedb PostgreSQL USERID postgres PASSWORD postgres```**
 
@@ -287,7 +328,7 @@ You should be able to see below information saying *Successfully Logged into dat
 
 ![](/files/gg_pg_dblogin.png)
 
-Now you are logged into database in GGSCI console, which means you are ready to proceed. We will create three extract processes and we have five tables in source database.
+Now you are logged into source database from GGSCI console, which means you are ready to proceed. Remember that we need to create three extract processes and we have five tables in source database.
 
 #### Enabling Supplemental Logging for a Source PostgreSQL Database
 
@@ -316,10 +357,21 @@ We will issue register command in each of these extracts steps.
 
 #### EXTTAR
 
+Oracle GoldenGate needs to register the extract with the database replication slot, before adding extract process in Goldengate. 
+_**Ensure that you are connected to SourceDB using the DBLOGIN command.**_
+
 Let's begin to create the first extract process, which is continuous replication in usual migration and replication project scenario.
 
-First register your extract **`register extract exttar`**. 
-Then edit extract configuration with **`edit params exttar`**. 
+
+1. First register your extract: 
+
+```register extract exttar```
+
+![](/files/gg_pg_exttar_0.png)
+
+2. Then edit extract configuration with **`edit params exttar`**. 
+
+![](/files/gg_pg_exttar_1.png)
 
 Insert below as your exttar parameter:
 ```
@@ -336,7 +388,7 @@ and save!
 
 _**NOTE:** Editing uses **vi** editor, you have to press key **i** to edit and press **:wq** keys then **hit enter** for save & quit._
 
-After that add your extract using below commands:
+3. To create your extract process issue below commands:
 
 ```
 add extract exttar, tranlog, begin now
@@ -344,22 +396,43 @@ add extract exttar, tranlog, begin now
 add exttrail ./dirdat/pd, extract exttar
 ```
 
-Confirm everything is correct then start this extract by issueing **`start exttar`** command.
+![](/files/gg_pg_exttar_2.png)
 
-![](/files/gg_pg_exttar.png)
+4. Confirm everything is correct then start this extract by issuing below command:
+ 
+ ```start exttar```
+
+![](/files/gg_pg_exttar_3.png)
 
 After completing this, you should be able to see status of extract with **`info all`** command and result should show you **RUNNING** state.
 
-This process is capturing change data from your source database. As I said earlier this is necessary step for usual migration and replication project. Because changes are being captured in live and some point during this process, you need do initial load to your target database.
+![](/files/gg_pg_exttar.png)
+
+This process is capturing change data from your source database. As it was mentioned earlier, this is necessary step for continuous replication or zero downtime migration project. 
+
+Because changes are being captured in live and meanwhile at some point during this process you need to do initial load to your target database.
+As soon as initial load process finished and you loaded, let’s say your warm data at your target database, you need to start applying captured data whilst you were importing. 
+
+Once you are satisfied with source and target databases data quality, you can do cut over and point you application connections to your target database.
 
 #### EXTDMP
 
+Oracle GoldenGate needs to register the extract with the database replication slot, before adding extract process in Goldengate. 
+*Ensure that you are connected to SourceDB using the DBLOGIN command.*
+
 Now changes are being captured from source database and we need to send that to GG microservices, in order to apply at target database. Therefore we need another process, which acts as extract but sends existing trail files to GG microservices.
 
-Again, register your extdmp extract **`register extract extdmp`**
-Then edit extract configuration with **`edit params extdmp`** similar to previous step.
+1. Again, register your extdmp extract:
 
-Insert below as your extdmp parameter, but **make sure** you change ip_address with your GG Microservice's IP Address!
+```register extract extdmp```
+
+![](/files/gg_pg_extdmp_0.png)
+
+2. Then edit extract configuration with **`edit params extdmp`** similar to previous step.
+
+![](/files/gg_pg_extdmp_1.png)
+
+Insert below as your extdmp parameter, but **make sure** you change **ip_address** with your GG Microservice's IP Address!
 
 ```
 EXTRACT extdmp
@@ -375,7 +448,7 @@ TABLE public."ParkingData";
 
 _**NOTE**:Editing uses **vi** editor, so you have to press **i** for editing the file, when you are done press **:wq** then **hit enter** for save & quit._
 
-After that add your extract using below commands
+3. To create your extract process issue below commands:
 
 ```
 add extract extdmp, exttrailsource ./dirdat/pd
@@ -383,19 +456,44 @@ add extract extdmp, exttrailsource ./dirdat/pd
 add rmttrail pd, extract extdmp, megabytes 50
 ```
 
-Confirm everything is correct then start this extract by issueing **`start extdmp`** command, similar to previous step.
+
+![](/files/gg_pg_extdmp_2.png)
+
+4. Confirm everything is correct then start this extract by issuing below command:
+ 
+ ```start extdmp```
+
+
+![](/files/gg_pg_extdmp_3.png)
+
+After completing this, you should be able to see status of extract with **`info all`** command and result should show you **RUNNING** state.
 
 ![](/files/gg_pg_extdmp.png)
 
+EXTTAR process is capturing your changes at your source database, however it is going nowhere rather than being kept at Goldengate instance.
+ 
+EXTDMP process is then pumping captured trail files to Goldengate Microservices instance. We will check if this is working properly in Lab-4.
+These two processes were preparation for change synchronization.
+
 #### INITLOAD
 
-Now database changes are being transferred to GG Microservices, it is time to do our initial load... explanation
+So far, we created 2 extract processes which are now capturing changes and shipping to Goldengate Microservices instance.
 
-Again register your initload **`register extract init`** 
-Then edit extract configuration with **`edit params init`** similar to previous steps.
+However, we are not yet loaded our static data directly from source objects to target database. This specific process is called Initial-load. Steps are similar to the previous extract processes
 
+1. Again register your initload 
 
-Insert below as your initial load parameter, but **make sure** you change ip_address with your GG Microservice's IP Address!
+```register extract init``` 
+
+![](/files/gg_pg_initload_0.png)
+
+2. To edit initial load configuration, issue below:
+
+```edit params init```
+
+![](/files/gg_pg_initload_1.png)
+
+Insert below as your initial load parameter, but **make sure** you change **ip_address** with your GG Microservice's IP Address!
 
 ```
 EXTRACT init
@@ -410,33 +508,62 @@ TABLE public."ParkingData";
 ```
 
 _**NOTE**:Editing uses **vi** editor, so you have to press **i** for editing the file, when you are done press **:wq** then **hit enter** for save & quit._
-After that add your initial load process:
+
+3. After that add your initial load process:
 
 ```
 add extract init, sourceistable
 ```
+Extract process extracts a current set of static data directly from the source objects in preparation for an initial load to another database. SOURCEISTABLE type does not use checkpoints. 
 
-Confirm everything is correct then start this extract by issueing **`start init`** command. You can see status of this special type of extract process with **`info init`. **
+![](/files/gg_pg_initload_2.png)
+
+4. Confirm everything is correct then start initial load by issuing below command: 
+
+```start init``` 
+
+![](/files/gg_pg_initload_3.png)
+
+You can see status of this special type of extract process with **`info init`. **
 
 ![](/files/gg_pg_initload.png)
 
+Note that number of record is 10000 and status is already STOPPED. Because our sample data has only 5 tables and few records, initial load will take only few seconds.
+You can see more information about extract process with:
 
-You can see more information about extract process with **`view report init`**, it is good way to investigate your goldengate process result. I can see some good statistics at the end of this report
+```
+view report init
+```
 
 ![](/files/gg_pg_initload_report.png)
 
-# Step 4
-After successful creating extract processes, now it is time to explore your GG Microservices server. 
-Let's make console connection to microservice, copy ip address of OGG_Microservices_Public_ip and connect using:
+
+It is good way to investigate your Goldengate process result. I can see some good statistics at the end of this report
+
+# LAB 4
+In this final step of workshop, we will configure replication process in Microservices and apply captured changes from source database to our target Autonomous database. This is final lab.
+
+####	Access to Goldengate Microservices instance
+
+After successful creating extract processes, now it is time to explore your GG Microservices server. Let's make console connection to microservice, copy ip address of OGG_Microservices_Public_ip and connect using:
 
 **`ssh opc@your_microservice_ip_address -i ~/.ssh/oci`**
 
+#### Retrieve Goldengate Microservices’ admin password
+
+Once you are in issue following **`cat ogg-credentials.json`**, and copy credential value from output
+
 ![](/files/oggadmin.png)
 
-Once you are in issue following **`cat ogg-credentials.json`**, and copy credential value from output. Good practice is keep it in your notepad.
-Now, open your web browser and point to `https://your_microservices_ip_address`. Provide **oggadmin** in username and credentials, then log in.
+Good practice is to keep it in your notepad. 
+
+#### Login to Microservices web console
+
+Now, open your web browser and point to https://your_microservices_ip_address. Provide oggadmin in username and credentials, then log in
 
 ![](/files/gg_oggadmin.png)
+
+#### Open Target Receiver server
 
 Then click on Target Receiver server's port **9023**, it will redirect you to new tab, provide your credentials again for username **oggadmin**.
 
@@ -448,11 +575,13 @@ You should be seeing something like this, what it means that your extdmp is pump
 
 This is something you'd need if you'd want continuous replication and migration. 
 
-However in this lab scope, we will only migrate to ATP with help of initload. Click on Target Receiver server port **9021**, it will redirect you to new tab, provide your credentials again for username **oggadmin**.
+#### Open Target Administration server
+
+In this lab scope, we will only migrate to ATP with help of initload. Click on Target Receiver server port **9021**, it will redirect you to new tab, provide your credentials again for username **oggadmin**.
 
 ![](/files/micro_oggadmin_0.png)
 
-#### Add Credentials
+#### Modify Goldengate credentials
 
 You should be seeing empty Extracts and Replicats dashboard. Let's add some Autonomous Database credentials at first. Open hamburger menu on left top corner, choose **Configuration**
 
@@ -460,10 +589,12 @@ You should be seeing empty Extracts and Replicats dashboard. Let's add some Auto
 
 It will open OGGADMIN Security and you will see we already have a connection to **HOL Target ATP** database. However, you still need to add password here. Click on a pencil icon to alter credentials.
 
-
 ![](/files/micro_ggadmin_1.png)
 
-Provide password ` GG##lab12345 ` and verify it. This is your ggadmin password, which we provided in lab 3. **NOTE: if you specified different password, please use that password**
+#### Update password and test connection
+
+Provide password ` GG##lab12345 ` and verify it. This is your ggadmin password, which we provided in lab 3. 
+**NOTE: if you specified different password, please use that password**
 
 ![](/files/micro_ggadmin_2.png)
 
@@ -471,40 +602,53 @@ After that click on **Log in** database icon.
 
 ![](/files/micro_ggadmin_3.png)
 
-Scroll to **Checkpoint** part and click on **+** icon, then provide `ggadmin.chkpt` and **SUBMIT**. Checkpoint tables contain the data necessary for tracking the progress of the Replicat as it applies transactions to the target system. Regardless of the Replicat that is being used, it is a best practice to enable the checkpoint table for the target system.
+#### Add checkpoint table
+
+Scroll to **Checkpoint** part and click on **+** icon, then provide `ggadmin.chkpt` and **SUBMIT**. 
 
 ![](/files/micro_ggadmin_4.png)
 
+Checkpoint table contains the data necessary for tracking the progress of the Replicat as it applies transactions to the target system. Regardless of the Replicat that is being used, it is a best practice to enable the checkpoint table for the target system.
 
 Now let's go back to **Overview** page from here.
 
-#### Add Replicat
+#### Add replication process
 
 The apply process for replication, also known as Replicat, is very easy and simple to configure. There are five types of Replicats supported by the Oracle GoldenGate Microservices. In overview page, go to Replicat part and click on **+** to create our replicat process.
 
-
 ![](/files/micro_initload_0.png)
-
 
 We will choose **Nonintegrated Replicat** for initial load, click **Next**. In non-integrated mode, the Replicat process uses standard SQL to apply data directly to the target tables. In our case, number of records in source database is small and we don't need to run in parallel apply, therefore it will suffice.
 
-
 ![](/files/micro_initload_1.png)
 
+#### Modify replication parameters
 
-Provide your name for replicat process then click on **Credentials Domain** drop-down list. There is only one at the moment, choose available option for you then **Credential Alias** would be your **hol_tp**, which is our pre-created connection group to ATP. After that go below to find **Trail Name** and edit to **il**. We defined this in our initload parameter, so it cannot be just random name. Also provide **Trail Subdirectory** as **/u02/trails** and choose **Checkpoint Table** from drop-down list.
+Provide your name for replicat process, for example **initload**, process name has to be unique and 8 characters long. It is better if you give some meaningful names to identify them later on. 
+I choose to name it as **initload**, because this is currently our initial load process.
+
+![](/files/micro_initload_2_1.png)
+
+Then click on **Credentials Domain** drop-down list. There is only one credential at the moment, choose the available option for you.  
+In the **Credential Alias**, choose **hol_tp** from drop down, which is our pre-created connection group to target ATP. 
+
+![](/files/micro_initload_2_2.png)
+
+After that go below to find Trail Name and edit to **il**. We defined this in our extract parameter, so it cannot be just a random name.
+
+![](/files/micro_initload_2_3.png)
+
+Also provide **/u02/trails** in "Trail Subdirectory" and choose a **Checkpoint Table** from drop-down list. It is **GGADMIN.CHKPT** in our case.
+
 
 Review everything then click **Next**
 
 
-![](/files/micro_initload_2.png)
-
+#### Edit parameter file
 
 Microservices has created some draft parameter file for your convenience, let's edit to our need.
 
-
 ![](/files/micro_initload_3_1.png)
-
 
 Erase existing and paste below configuration 
 
@@ -527,6 +671,8 @@ I hope everything is correct until this stage. Click **Create and Run** to start
 ![](/files/micro_initload_4.png)
 
 
+#### Check INITLOAD status
+
 In overview dashboard, now you should be seeing successful running INITLOAD replication. Click on **Action** button choose **Details**.
 
 
@@ -537,5 +683,34 @@ You can see details of running replicat process. In statistics tab, you'd see so
 
 ![](/files/micro_initload_5.png)
 
-That was it, you successfully migrated Postgresql database to Autonomous Database in Oracle Cloud Infrastructure!
+Congratulations! You have completed this workshop! 
 
+You successfully migrated Postgresql database to Autonomous Database in Oracle Cloud Infrastructure.
+
+
+## Summary
+
+Here is summary of resources which was created by Terraform script and used in our workshop.
+
+1. [Virtual Cloud Network](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/managingVCNs.htm)
+- Public Subnet, Internet Gateway
+- Private Subnet, NAT Gateway, Service gateway
+
+2. [Compute Virtual Machines and Shapes, OS Images] (https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm)
+- Source PostgreSQL database instance, 
+- Goldengate PostgreSQL instance
+- Goldengate Microservices instance
+
+3. [Autonomous Database offerings ] (https://docs.oracle.com/en-us/iaas/Content/Database/Concepts/adboverview.htm)
+- Target ATP
+
+4. [Oracle Cloud Marketplace](https://docs.oracle.com/en-us/iaas/Content/Marketplace/Concepts/marketoverview.htm)
+- Goldengate non-oracle deployment 
+- Goldengate Microservices deployment
+
+
+## Acknowledgements
+
+* **Author** - Bilegt Bat-Ochir, Solution Engineer
+* **Contributors** - John Craig, Patrick Agreiter
+* **Last Updated By/Date** -
