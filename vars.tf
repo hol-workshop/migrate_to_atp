@@ -2,6 +2,16 @@ variable "tenancy_ocid" {}
 variable "region" {}
 variable "compartment_ocid" {}
 
+################################ Quotas
+variable "source_pgsql_compute_shape" {
+  default = "VM.Standard.E2.1"
+}
+variable "ogg_pgsql_compute_shape" {
+  default = "VM.Standard2.1"
+}
+variable "ogg_micro_compute_shape" {
+  default = "VM.Standard2.1"
+}
 ################################ VCN
 
 variable "holvcn_display_name" {
@@ -102,18 +112,12 @@ variable "source_pgsql_boot_size_in_gbs" {
 variable "source_pgsql_hostname_label" {
   default = "sourcedb"
 }
-
 variable "source_pgsql_custom_volume_sizes" {
   default = false
 }
 variable "source_pgsql_display_name" {
   default = "HOL Source PGSQL"
 }
-
-variable "source_pgsql_compute_shape" {
-  default = "VM.Standard.E2.1"
-}
-
 variable "source_postgre_image_ocid" {
   type = map(string)
 
@@ -193,7 +197,6 @@ variable "ogg_micro_deployments_size_in_gbs" {
 variable "ogg_micro_cacheManager_size_in_gbs" {
   default = "50"
 }
-
 // OGG Deployment volume
 variable "ogg_micro_deployments_volume_id" {
   default = ""
@@ -202,7 +205,6 @@ variable "ogg_micro_deployments_volume_id" {
 variable "ogg_micro_cacheManager_volume_id" {
   default = ""
 }
-
 // OGG Trails volume
 variable "ogg_micro_trails_volume_id" {
   default = ""
@@ -233,9 +235,6 @@ variable "ogg_pgsql_display_name" {
 variable "ogg_pgsql_hostname_label" {
   default = "ogg19cpgsql"
 }
-variable "ogg_pgsql_compute_shape" {
-  default = "VM.Standard2.1"
-}
 variable "ogg_pgsql_custom_volume_sizes" {
   default = false
 }
@@ -249,7 +248,6 @@ variable "ogg_micro_edition" {
 variable "ogg_micro_version" {
   default = "19.1.0.0.201013"
 }
-
 ################################ OGG MICRO INSTANCE
 variable "ogg_micro_assign_public_ip" {
   default = true
@@ -262,9 +260,6 @@ variable "ogg_micro_display_name" {
 }
 variable "ogg_micro_hostname_label" {
   default = "ogg19micro"
-}
-variable "ogg_micro_compute_shape" {
-  default = "VM.Standard2.1"
 }
 variable "ogg_micro_custom_volume_sizes" {
   default = false
