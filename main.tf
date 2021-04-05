@@ -105,7 +105,7 @@ module "atp" {
 	source          = "./atp"
 	compartment_id  = "${var.compartment_ocid}"
 	display_name 	= "${var.atp_display_name}"
-	db_name         = "${var.atp_db_name}"
+	db_name         = "HOL_${random_string.deploy_id.result}"
 	db_workload  	= "${var.atp_workload}"
 	is_free_tier	= "${var.atp_is_free_tier}"
 	db_version 		= "${var.atp_db_version}"
