@@ -9,5 +9,8 @@ data "oci_identity_fault_domains" "fault_domains" {
 
 resource "random_string" "deploy_id" {
   length  = 4
+  upper   = false
+  lower   = false
+  number  = true
   special = false
 }
