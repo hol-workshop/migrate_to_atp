@@ -41,7 +41,7 @@ resource "oci_core_route_table" "holvcn_public_route_table" {
     vcn_id = oci_core_vcn.holvcn.id
     route_rules {
         network_entity_id = oci_core_internet_gateway.holvcn_igw.id
-        cidr_block = var.holvcn_igw_cidr_block
+        destination = var.holvcn_igw_cidr_block
         destination_type = "CIDR_BLOCK"
     }
 }
@@ -53,7 +53,7 @@ resource "oci_core_route_table" "holvcn_private_route_table" {
     vcn_id = oci_core_vcn.holvcn.id
     route_rules {
         network_entity_id = oci_core_nat_gateway.holvcn_nat.id
-        cidr_block = var.holvcn_nat_cidr_block
+        destination = var.holvcn_nat_cidr_block
         destination_type = "CIDR_BLOCK"
     }
 }
