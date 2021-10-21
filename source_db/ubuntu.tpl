@@ -18,9 +18,10 @@ sudo sed -i 's/localhost/*/g' /etc/postgresql/14/main/postgresql.conf
 
 echo "POSTGRE - Remote access parameter is enabled $(date -R)!" >> /home/ubuntu/install.log
 
-sudo sed -i 's/#password_encryption/password_encryption/g' /etc/postgresql/14/main/postgresql.conf
-line_old='password_encryption = scram-sha-256'
+line_old='#password_encryption = scram-sha-256'
 line_new='password_encryption = md5'
+
+sudo sed -i "s%$line_old%$line_new%g" /etc/postgresql/14/main/postgresql.conf
 
 echo "POSTGRE - Password encryption md5 is enabled $(date -R)!" >> /home/ubuntu/install.log
 
@@ -28,6 +29,12 @@ line_old='host    all             all             127.0.0.1/32            scram-
 line_new='host    all             all             0.0.0.0/0               md5'
 
 sudo sed -i "s%$line_old%$line_new%g" /etc/postgresql/14/main/pg_hba.conf
+
+line_old='scram-sha-256'
+line_new='md5'
+
+sudo sed -i "s%$line_old%$line_new%g" /etc/postgresql/14/main/pg_hba.conf
+
 echo "POSTGRE - Remote access parameter in pg_hba file is updated $(date -R)!" >> /home/ubuntu/install.log
 
 line_old='#wal_level = replica'
