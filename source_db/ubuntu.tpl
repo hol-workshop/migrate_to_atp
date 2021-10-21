@@ -15,6 +15,12 @@ echo "UBUNTU - postgresql 14 is now installed $(date -R)!" >> /home/ubuntu/insta
 
 sudo sed -i 's/#listen_addresses/listen_addresses/g' /etc/postgresql/14/main/postgresql.conf
 sudo sed -i 's/localhost/*/g' /etc/postgresql/14/main/postgresql.conf
+
+
+sudo sed -i 's/#password_encryption/password_encryption/g' /etc/postgresql/14/main/postgresql.conf
+line_old='password_encryption = scram-sha-256'
+line_new='password_encryption = md5'
+
 echo "POSTGRE - Remote access parameter is enabled $(date -R)!" >> /home/ubuntu/install.log
 
 line_old='host    all             all             127.0.0.1/32            scram-sha-256'
