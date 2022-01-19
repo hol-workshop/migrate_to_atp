@@ -147,7 +147,7 @@ variable "source_postgre_image_ocid" {
 	uk-london-1 	= "ocid1.image.oc1.uk-london-1.aaaaaaaalu2sd65shsmeewhijd5bo4ut64sc5l3436lgoizanotrqbzawlwq"
 	us-ashburn-1 	= "ocid1.image.oc1.iad.aaaaaaaasp5c733iphbi3cwbakd75nvk6pf6r7pgz4dsroz3pdrgcsfyk6lq"
 	us-phoenix-1 	= "ocid1.image.oc1.phx.aaaaaaaazvmq762wkokwfxpec3iipkidzxrqxqv4bdmjszm4mkcno3nzzzga"
-	us-sanjose-1 	= "ocid1.image.oc1.us-sanjose-1.aaaaaaaahdd7i2sp2yxu5skd72cefntfwizg7sop4bnzeziooavzmwyufynq
+	us-sanjose-1 	= "ocid1.image.oc1.us-sanjose-1.aaaaaaaahdd7i2sp2yxu5skd72cefntfwizg7sop4bnzeziooavzmwyufynq"
   }
 }
 
