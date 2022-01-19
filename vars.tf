@@ -4,7 +4,7 @@ variable "compartment_ocid" {}
 
 ################################ Quotas
 variable "source_pgsql_compute_shape" {
-  default = "VM.Standard.E2.1"
+  default = "VM.Standard2.1"
 }
 variable "ogg_pgsql_compute_shape" {
   default = "VM.Standard2.1"
