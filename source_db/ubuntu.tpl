@@ -7,11 +7,14 @@ echo "UBUNTU - postgre repo is downloaded $(date -R)!" >> /home/ubuntu/install.l
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 echo "UBUNTU - postgre repo is updated $(date -R)!" >> /home/ubuntu/install.log
 
-sudo apt-get update -y 
+sudo apt-get update -y >> /home/ubuntu/install.log
+sleep 40
 echo "UBUNTU - ubuntu is updated $(date -R)!" >> /home/ubuntu/install.log
 
-sudo apt-get install postgresql -y 
+sudo apt-get install postgresql -y  >> /home/ubuntu/install.log
 echo "UBUNTU - postgresql 14 is now installed $(date -R)!" >> /home/ubuntu/install.log
+
+sleep 20
 
 sudo sed -i 's/#listen_addresses/listen_addresses/g' /etc/postgresql/14/main/postgresql.conf
 sudo sed -i 's/localhost/*/g' /etc/postgresql/14/main/postgresql.conf
