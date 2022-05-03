@@ -66,7 +66,8 @@ echo "POSTGRE - ParkingData is created $(date -R)!" >> /home/ubuntu/install.log
 sudo -H -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
 echo "POSTGRE - postgres user is updated $(date -R)!" >> /home/ubuntu/install.log
 
-sudo curl -O https://objectstorage.eu-frankfurt-1.oraclecloud.com/n/cloudstarscee/b/Postgresql/o/parking.tar >> /home/ubuntu/install.log
+sudo curl -O https://objectstorage.eu-zurich-1.oraclecloud.com/n/zr7tx6pbivnq/b/parking/o/parking.tar >> /home/ubuntu/install.log
+
 echo "POSTGRE - ParkingData is downloaded $(date -R)!" >> /home/ubuntu/install.log
 
 sudo -H -u postgres bash -c 'pg_restore --dbname=parkingdata /parking.tar'
