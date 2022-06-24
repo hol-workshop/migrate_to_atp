@@ -10,3 +10,5 @@ variable "display_name" {}
 variable "hostname_label" {}
 variable "subnet_id" {}
 variable "assign_public_ip" {}
+variable "ocpus" {}
+variable "memory_in_gbs" {}
