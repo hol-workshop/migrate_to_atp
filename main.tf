@@ -29,22 +29,20 @@ module "ogg_pgsql_image" {
 	market_image_id   = local.mp_listing_resource_id
 	custom_image_name = "ogg-${var.ogg_pgsql_version}-${var.ogg_pgsql_edition}-${var.ogg_pgsql_dbms}"
 }
-module "ogg_pgsql_compute" {
-        source                  = "./ogg_pgsql"
+module "source_pgsql" {
+        source                  = "./source_db"
         compartment_id          = var.compartment_ocid
         availability_domain     = data.oci_identity_availability_domains.ads.availability_domains[0].name
         ssh_public_key          = file("~/.ssh/oci.pub")
-        boot_size_in_gbs        = var.ogg_pgsql_boot_size_in_gbs
-        display_name            = var.ogg_pgsql_display_name
-        hostname_label          = var.ogg_pgsql_hostname_label
-        compute_shape           = var.ogg_pgsql_compute_shape
-        image_id                = module.ogg_pgsql_image.image_id
-        swap_volume_id          = module.ogg_pgsql_swap_block_volume.volume_id
-        trails_volume_id        = module.ogg_pgsql_trails_block_volume.volume_id
-        deployments_volume_id   = module.ogg_pgsql_deployments_block_volume.volume_id
+        boot_size_in_gbs        = var.source_pgsql_boot_size_in_gbs
+        display_name            = var.source_pgsql_display_name
+        hostname_label          = var.source_pgsql_hostname_label
+        compute_shape           = var.source_pgsql_compute_shape
+        ocpus                   = var.source_pgsql_compute_ocpus
+        memory_in_gbs           = var.source_pgsql_memory_in_gbs
+        image_id                = var.source_postgre_image_ocid[var.region]
         subnet_id               = oci_core_subnet.holvcn_public_subnet.id
-        assign_public_ip        = var.ogg_pgsql_assign_public_ip
-        source_db               = module.source_pgsql.Source_PGSQLDB_Public_ip
+        assign_public_ip        = var.source_pgsql_assign_public_ip
 }
 
 module "ogg_pgsql_compute" {
