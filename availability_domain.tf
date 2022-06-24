@@ -11,6 +11,5 @@ resource "random_string" "deploy_id" {
   length  = 4
   upper   = false
   lower   = false
-  number  = true
   special = false
 }
