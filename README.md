@@ -1,5 +1,5 @@
 # migrate_to_atp
-Hello Folks! Welcome to migrate to autonomous database lab. You can check out the steps from 
+Hello Folks! Welcome to migrate a PostgreSQL to Oracle Autonomous database lab. You can check out the steps from the below link on LiveLabs.
 
 https://apexapps.oracle.com/pls/apex/dbpm/r/livelabs/run-workshop?p210_wid=907
 
