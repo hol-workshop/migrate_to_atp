@@ -11,7 +11,7 @@ sudo apt-get update -y >> /home/ubuntu/install.log
 sleep 40
 echo "UBUNTU - ubuntu is updated $(date -R)!" >> /home/ubuntu/install.log
 
-sudo apt-get install postgresql -y  >> /home/ubuntu/install.log
+sudo apt-get install postgresql-14 -y  >> /home/ubuntu/install.log
 echo "UBUNTU - postgresql 14 is now installed $(date -R)!" >> /home/ubuntu/install.log
 
 sleep 20
